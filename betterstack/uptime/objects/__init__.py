@@ -1,4 +1,4 @@
-from . import BaseAPIObject, RESTAPI
+from betterstack.uptime import BaseAPIObject, RESTAPI
 
 class Monitor(BaseAPIObject):
     '''

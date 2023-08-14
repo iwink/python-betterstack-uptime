@@ -1,5 +1,9 @@
 from setuptools import find_packages, setup
 
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
+
 setup(
     name='betterstack-uptime',
     packages=find_packages(include=['betterstack.uptime']),
@@ -7,6 +11,7 @@ setup(
     author='Wouter Mellema',
     author_email='w.mellema@iwink.nl',
     description='Library for communicating with the BetterStack Uptime API',
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.om/iwink/betterstack-uptime",
     classifiers=[

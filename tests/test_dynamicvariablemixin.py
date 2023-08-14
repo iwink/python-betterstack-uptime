@@ -38,3 +38,19 @@ class DynamicVariableMixinTests(unittest.TestCase):
         test_instance.add_tracked_property("hello", "World!")
         self.assertEqual(test_instance.hello, "World!")
         self.assertEqual(test_instance.get_modified_properties(), [])
+
+    def test_multiple_variables(self):
+        test_instance_1 = DynamicVariableMixin()
+        test_instance_2 = DynamicVariableMixin()
+        test_instance_1.add_tracked_property('hello', "World 1")
+        self.assertEqual(test_instance_1.hello, "World 1")
+        test_instance_2.add_tracked_property('hello', "World 2")
+        self.assertEqual(test_instance_1.hello, "World 1")
+        self.assertEqual(test_instance_2.hello, "World 2")
+        self.assertEqual(test_instance_1.get_modified_properties(), [])
+        self.assertEqual(test_instance_2.get_modified_properties(), [])
+        test_instance_1.hello = "Modified"
+        self.assertEqual(test_instance_1.hello, "Modified")
+        self.assertEqual(test_instance_2.hello, "World 2")
+        self.assertEqual(test_instance_1.get_modified_properties(), ['hello'])
+        self.assertEqual(test_instance_2.get_modified_properties(), [])

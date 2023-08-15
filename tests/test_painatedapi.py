@@ -1,5 +1,6 @@
 import unittest
-import sys, json
+import sys
+import json
 
 if sys.version_info >= (3, 3):  # pragma: no cover
     from unittest import mock
@@ -9,6 +10,7 @@ else:  # pragma: no cover
 from betterstack.uptime import PaginatedAPI
 from betterstack.uptime.auth import BearerAuth
 
+
 class PaginatedAPITests(unittest.TestCase):
 
     def mock_paginated_get(*args, **kwargs):
@@ -17,13 +19,14 @@ class PaginatedAPITests(unittest.TestCase):
                 self.json_data = json_data
                 self.status_code = status_code
                 self.ok = ok
+
             def raise_for_status(self):
-                if self.status_code is not 200:
+                if self.status_code != 200:
                     raise Exception
+
             def json(self):
                 return self.json_data
 
-        print(kwargs['params'])
         if kwargs['url'] == 'http://some.weird/api/v2/test_json' and not kwargs['params']:
             first_json = json.loads("""{
                 "data": [
@@ -56,13 +59,11 @@ class PaginatedAPITests(unittest.TestCase):
             return MockResponse(second_json, 200, True)
         return MockResponse(None, 404, False)
 
-
     def setUp(self):
         self.api = PaginatedAPI(base_url="http://some.weird/api/v2/", auth=BearerAuth("HelloTest"))
-    
+
     @mock.patch('betterstack.uptime.requests.get', side_effect=mock_paginated_get)
     def test_get(self, mock_get):
         resp = self.api.get("test_json")
         resp = [_ for _ in resp]
         self.assertEqual(2, len(resp))
-

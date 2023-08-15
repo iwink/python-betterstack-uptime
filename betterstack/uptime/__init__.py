@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import requests
-import json
 
-from typing import Dict, List, Generator, Tuple
+from typing import Dict, Generator, Tuple
 from urllib.parse import urljoin, urlparse, parse_qs
 
 from .auth import BearerAuth
@@ -31,7 +30,7 @@ class RESTAPI():
 
     def clean_params(self, parameters) -> Dict[str, any]:
         '''
-        Removes the trailing underscore in order to be able to use parameters 
+        Removes the trailing underscore in order to be able to use parameters
         like `from`
 
         :param dict parameters: A dict with all parameters to be cleaned
@@ -49,7 +48,7 @@ class RESTAPI():
         return result
 
     # Pretty obvious, don't you think?
-    def get(self, url: str, body: str=None, headers: Dict[str, any]=None, parameters: Dict[str, any]=None) -> Dict[str, any]:
+    def get(self, url: str, body: str = None, headers: Dict[str, any] = None, parameters: Dict[str, any] = None) -> Dict[str, any]:
         '''
         Perform a GET request on a URL
 
@@ -65,7 +64,8 @@ class RESTAPI():
         r = requests.get(url=urljoin(self.base_url, url), params=parameters, headers=headers, auth=self.auth)
         r.raise_for_status()
         return r.json()
-    def post(self, url: str, body: str=None, headers: Dict[str, any]=None, parameters: Dict[str, any]=None) -> requests.Response:
+
+    def post(self, url: str, body: str = None, headers: Dict[str, any] = None, parameters: Dict[str, any] = None) -> requests.Response:
         '''
         Perform a POST request on a URL
 
@@ -82,7 +82,8 @@ class RESTAPI():
         r.raise_for_status()
         r.raise_for_status()
         return r
-    def patch(self, url: str, body: str=None, headers: Dict[str, any]=None, parameters: Dict[str, any]=None) -> requests.Response:
+
+    def patch(self, url: str, body: str = None, headers: Dict[str, any] = None, parameters: Dict[str, any] = None) -> requests.Response:
         '''
         Perform a PATCH request on a URL
 
@@ -98,7 +99,8 @@ class RESTAPI():
         r = requests.patch(url=urljoin(self.base_url, url), json=body, params=parameters, headers=headers, auth=self.auth)
         r.raise_for_status()
         return r
-    def delete(self, url: str, body: str=None, headers: Dict[str, any]=None, parameters: Dict[str, any]=None) -> requests.Response:
+
+    def delete(self, url: str, body: str = None, headers: Dict[str, any] = None, parameters: Dict[str, any] = None) -> requests.Response:
         '''
         Perform a DELETE request on a URL
 
@@ -120,8 +122,8 @@ class PaginatedAPI(RESTAPI):
     '''
     Specically used with paginated API views
     '''
-    
-    def get(self, url: str, body: str=None, headers: Dict[str, any]=None, parameters: Dict[str, any]=None) -> Generator:
+
+    def get(self, url: str, body: str = None, headers: Dict[str, any] = None, parameters: Dict[str, any] = None) -> Generator:
         '''
         Overrides the default behaviour, and checks for the pagination.next field.
         If it's there: follow it (and it's parameters) untill it's empty.
@@ -134,7 +136,7 @@ class PaginatedAPI(RESTAPI):
         :rtype: Generator
         '''
 
-        data=super().get(url, body, headers, parameters)
+        data = super().get(url, body, headers, parameters)
         if not parameters:
             parameters = {}
         # Only recurse lists. No need for single objects
@@ -145,13 +147,14 @@ class PaginatedAPI(RESTAPI):
         # Return results of first page before recursing
         for monitor in data['data']:
             yield monitor
-        
+
         while data['pagination']['next']:
             # Parse URL parameters so we can use it in a new request
             parameters.update(parse_qs(urlparse(data['pagination']['next']).query))
             data = super().get(url, body, headers, parameters)
             for monitor in data['data']:
                 yield monitor
+
 
 class UptimeAPI(PaginatedAPI):
     def __init__(self, bearer_token: str):
@@ -169,12 +172,12 @@ class BaseAPIObject(DynamicVariableMixin):
     Base class for all API objects. Uses dynamically assignable variables
     from api responses in order to store/filter/update data
     Always use the set_variable() function provided by DynamicVariableMixin
-    in order to change or assign a variable. This ensures tracking of 
+    in order to change or assign a variable. This ensures tracking of
     changed variables
     '''
     _url_endpoint: str
 
-    def __init__(self, api: RESTAPI, id: int=None, attributes: dict=None, **kwargs):
+    def __init__(self, api: RESTAPI, id: int = None, attributes: dict = None, **kwargs):
         '''
         Initializes the object with a corresponding API client, id and optional attributes
         If only the ID is provided, it will fetch data from the API in order to fill it's
@@ -195,7 +198,7 @@ class BaseAPIObject(DynamicVariableMixin):
             for k, v in attributes.items():
                 self.add_tracked_property(k, v)
             self.reset_variable_tracking()
-    
+
     def generate_url(self) -> str:
         '''
         Creates the URL in order to get this specific instance
@@ -205,7 +208,7 @@ class BaseAPIObject(DynamicVariableMixin):
         '''
 
         return "%s/%i" % (self._url_endpoint, self.id)
-    
+
     @classmethod
     def generate_global_url(cls) -> str:
         '''
@@ -216,21 +219,20 @@ class BaseAPIObject(DynamicVariableMixin):
         '''
 
         return cls._url_endpoint
-        
 
     def fetch_data(self, **kwargs):
         '''
         Gets all attributes from the API
 
-        :param **kwargs: A list of parameters to use as filters. 
+        :param **kwargs: A list of parameters to use as filters.
         '''
-        
+
         try:
             data = self._api.get(self.generate_url(), parameters=kwargs).__next__()
             for k, v in data['attributes'].items():
                 self.add_tracked_property(k, v)
             self.reset_variable_tracking()
-        #TODO Better exception handling
+        # TODO Better exception handling
         except Exception as e:
             raise e
 
@@ -241,7 +243,7 @@ class BaseAPIObject(DynamicVariableMixin):
         '''
 
         if self._updated_vars:
-            data={}
+            data = {}
             for var in self.get_modified_properties():
                 data[var] = getattr(self, var)
             r = self._api.patch(self.generate_url(), body=data)
@@ -261,23 +263,23 @@ class BaseAPIObject(DynamicVariableMixin):
         '''
         Either, fetch an object using queryable attributes, or
         create a new object using said attributes.
-        
+
         :param RESTAPI api: API instance
         :param **kwargs: Arguments to be used to filter results
         :return: Tuple with a Created boolean, and result
         :rtype: Tuple(bool, BaseAPIObject)
         :raises ValueError: if multiple matches get returned
         '''
-        
+
         try:
-            instances=list(cls.filter(api, **kwargs))
+            instances = list(cls.filter(api, **kwargs))
         except ValueError:
-            instances=list(cls.get_all_instances(api))
+            instances = list(cls.get_all_instances(api))
             for k, v in kwargs.items():
-                instances=filter_on_attribute(instances, k, v)
+                instances = filter_on_attribute(instances, k, v)
         if len(instances) > 1:
             raise ValueError("Multiple matches on get_or_create, should never happen")
-        elif len(instances) is 0:
+        elif len(instances) == 0:
             return True, cls.new(api, **kwargs)
         else:
             return False, instances[0]
@@ -299,7 +301,7 @@ class BaseAPIObject(DynamicVariableMixin):
     @classmethod
     def filter(cls, api: RESTAPI, **kwargs) -> Generator[BaseAPIObject]:
         '''
-        Uses url parameters to filter objects. Filter options must be 
+        Uses url parameters to filter objects. Filter options must be
         in `_allowed_query_parameters` in order to work
 
         :param RESTAPI api: API instance

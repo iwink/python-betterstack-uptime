@@ -1,17 +1,17 @@
 import unittest
-import sys, json
+import sys
 
 if sys.version_info >= (3, 3):  # pragma: no cover
     from unittest import mock
 else:  # pragma: no cover
-    import mock
+    import mock  # noqa: F401
 
 from betterstack.uptime.auth import BearerAuth
 
-class BearerAuthTests(unittest.TestCase):
-    
-    def test_bearer_auth(self):
 
+class BearerAuthTests(unittest.TestCase):
+
+    def test_bearer_auth(self):
         class MockRequest():
             headers = {}
 
@@ -21,4 +21,7 @@ class BearerAuthTests(unittest.TestCase):
         testrequest = b.__call__(testrequest)
 
         self.assertTrue("authorization" in testrequest.headers)
-        self.assertEqual(testrequest.headers['authorization'], "Bearer mytesttoken")
+        self.assertEqual(
+            testrequest.headers['authorization'],
+            "Bearer mytesttoken"
+        )

@@ -14,7 +14,7 @@ class DynamicVariable(object):
 
     def __get__(self, obj, objtype):
         '''
-        Retrieve the value of this variable using the class that has it assigned. 
+        Retrieve the value of this variable using the class that has it assigned.
         Use the ID of the object as a pseudo memory address
 
         :param any obj: Object that has the variable
@@ -30,7 +30,7 @@ class DynamicVariable(object):
 
     def __set__(self, obj, val):
         '''
-        Set the value of this variable using the class that has it assigned. 
+        Set the value of this variable using the class that has it assigned.
         Uses the ID of the object as a pseudo memory address.
         Also logs whether the variable has changed or not
 
@@ -66,18 +66,16 @@ class DynamicVariableMixin():
         if self.__get_object_id__() not in self._dynamic_variables.keys():
             self._dynamic_variables[self.__get_object_id__()] = {}
 
-
         if hasattr(self, property_name):
             setattr(self, property_name, property_value)
         else:
             setattr(self.__class__, property_name, DynamicVariable(property_name))
             setattr(self, property_name, property_value)
 
-
     def get_modified_properties(self):
         '''
         Returns a list of all changed variable names
-        
+
         :return: List of changed variable names
         :rtype: List[str]
         '''
@@ -98,5 +96,5 @@ class DynamicVariableMixin():
         :return: Short ID
         :rtype: str
         '''
-        
+
         return hex(id(self))

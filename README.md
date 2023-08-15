@@ -46,6 +46,9 @@ for monitor in monitors:
     print(monitor.url)
 ```
 
+## Documentation
+
+Full documentation is available at [https://iwink.github.io/python-betterstack-uptime/](https://iwink.github.io/python-betterstack-uptime/)
 
 ## Contributing
 

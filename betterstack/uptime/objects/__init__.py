@@ -1,37 +1,39 @@
 from betterstack.uptime import BaseAPIObject, RESTAPI
 
+
 class Monitor(BaseAPIObject):
     '''
     Subclass in order to differentiate between endpoints and types. Can be used to store custom functionality
     '''
-    type="monitor"
-    _url_endpoint="monitors"
+    type = "monitor"
+    _url_endpoint = "monitors"
     _sla = None
     _sla_from, _sla_to = (None, None)
     _allowed_query_parameters = [
-            "url",
-            "pronounceable_name",
-            "per_page"
-        ]
+        "url",
+        "pronounceable_name",
+        "per_page"
+    ]
 
-    def __init__(self, api: RESTAPI, id: int, attributes: dict=None, **kwargs):
+    def __init__(self, api: RESTAPI, id: int, attributes: dict = None, **kwargs):
         super().__init__(api, id, attributes, **kwargs)
         self._sla = MonitorSLA(api, id, **kwargs)
-        
+
 
 class MonitorSLA(BaseAPIObject):
     '''
     Subclass in order to differentiate between endpoints and types. Can be used to store custom functionality
     '''
-    type="monitor_sla"
-    _url_endpoint="monitors/%i/sla"
+    type = "monitor_sla"
+    _url_endpoint = "monitors/%i/sla"
     _sla_start = None
     _sla_end = None
     _allowed_query_parameters = [
         'from',
         'to'
     ]
-    def __init__(self, api:RESTAPI, id: int, sla_from=None, sla_to=None, attributes: dict=None, force_update=False):
+
+    def __init__(self, api: RESTAPI, id: int, sla_from=None, sla_to=None, attributes: dict = None, force_update=False):
         if force_update or (sla_from and sla_to):
             super().__init__(api, id, from_=sla_from, to=sla_to, attributes=attributes)
         else:
@@ -63,16 +65,16 @@ class MonitorGroup(BaseAPIObject):
     '''
     Subclass in order to differentiate between endpoints and types. Can be used to store custom functionality
     '''
-    type="monitor_group"
-    _url_endpoint="monitor-groups"
+    type = "monitor_group"
+    _url_endpoint = "monitor-groups"
     _monitors = None
 
     _allowed_query_parameters = []
 
-    def __init__(self, api: RESTAPI, id: int, attributes: dict=None):
+    def __init__(self, api: RESTAPI, id: int, attributes: dict = None):
         super().__init__(api, id, attributes)
         self.fetch_monitors()
-    
+
     def fetch_monitors(self):
         data = self._api.get("%s/monitors" % self.generate_url())
         self._monitors = []
@@ -84,8 +86,8 @@ class Heartbeat(BaseAPIObject):
     '''
     Subclass in order to differentiate between endpoints and types. Can be used to store custom functionality
     '''
-    type="heartbeat"
-    _url_endpoint="heartbeats"
+    type = "heartbeat"
+    _url_endpoint = "heartbeats"
 
     _allowed_query_parameters = []
 
@@ -94,14 +96,13 @@ class HeartbeatGroup(BaseAPIObject):
     '''
     Subclass in order to differentiate between endpoints and types. Can be used to store custom functionality
     '''
-    type="heartbeat-group"
-    _url_endpoint="heartbeat-groups"
+    type = "heartbeat-group"
+    _url_endpoint = "heartbeat-groups"
 
 
 class Incident(BaseAPIObject):
     '''
     Subclass in order to differentiate between endpoints and types. Can be used to store custom functionality
     '''
-    type="incident"
-    _url_endpoint="incidents"
-
+    type = "incident"
+    _url_endpoint = "incidents"

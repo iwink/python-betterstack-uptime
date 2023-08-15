@@ -1,5 +1,6 @@
 import requests
 
+
 class BearerAuth(requests.auth.AuthBase):
     '''
     Wraps the authorization for requests in order to use BearerAuth easily
@@ -21,6 +22,6 @@ class BearerAuth(requests.auth.AuthBase):
         :return: Modified Request object
         :rtype: Request
         '''
-        
+
         r.headers["authorization"] = "Bearer %s" % self.token
         return r

@@ -1,5 +1,5 @@
-from betterstack.uptime.mixins import DynamicVariableMixin
 from typing import List
+
 
 def filter_on_attribute(objects: list, name: str, value: any) -> List[any]:
     '''
@@ -11,5 +11,5 @@ def filter_on_attribute(objects: list, name: str, value: any) -> List[any]:
     :return: List of matching objects
     :rtype: list
     '''
-    
+
     return [x for x in objects if hasattr(x, name) and getattr(x, name) == value]

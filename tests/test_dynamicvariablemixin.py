@@ -1,15 +1,15 @@
 import unittest
-import sys, json
+import sys
 
 if sys.version_info >= (3, 3):  # pragma: no cover
     from unittest import mock
 else:  # pragma: no cover
-    import mock
-
+    import mock  # noqa: F401
 
 from betterstack.uptime.mixins import DynamicVariableMixin
 
-class DynamicVariableMixinTests(unittest.TestCase):        
+
+class DynamicVariableMixinTests(unittest.TestCase):
 
     def test_modified_variable(self):
         test_instance = DynamicVariableMixin()

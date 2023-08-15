@@ -242,7 +242,7 @@ class BaseAPIObject(DynamicVariableMixin):
         Updated list is provided by DynamicVariableMixin
         '''
 
-        if self._updated_vars:
+        if self.get_modified_properties():
             data = {}
             for var in self.get_modified_properties():
                 data[var] = getattr(self, var)

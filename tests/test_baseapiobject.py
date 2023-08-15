@@ -234,13 +234,13 @@ class MonitorTests(unittest.TestCase):
     @mock.patch('betterstack.uptime.requests.patch', side_effect=mock_monitor_patch)
     def test_modify_single_value(self, mock_get, mock_patch):
         monitor = Monitor(api=self.api, id=1)
-        monitor.set_variable("paused", True)
+        monitor.paused = True
 
-        self.assertEqual(monitor._updated_vars, ["paused"])
+        self.assertEqual(monitor.get_modified_properties(), ["paused"])
         self.assertEqual(monitor.paused, True)
         monitor.save()
         self.assertEqual(monitor.paused, True)
-        self.assertEqual(monitor._updated_vars, [])
+        self.assertEqual(monitor.get_modified_properties(), [])
         self.assertEqual(monitor.updated_at, "1970-01-01T00:00:00.000Z")
 
     @mock.patch('betterstack.uptime.requests.get', side_effect=mock_monitor_get)

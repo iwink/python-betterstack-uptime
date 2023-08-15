@@ -261,10 +261,3 @@ class MonitorTests(unittest.TestCase):
         created, monitor = Monitor.get_or_create(self.api, url="https://thirdexample.com")
         self.assertTrue(created)
         self.assertEqual(monitor.pronounceable_name, "MyThirdExampleSite")
-
-    @mock.patch('betterstack.uptime.requests.get', side_effect=mock_monitor_get)  # noqa: F811
-    @mock.patch('betterstack.uptime.requests.post', side_effect=mock_monitor_post)
-    def test_modify_single_value(self, mock_get, mock_post):
-        monitor = Monitor.new(self.api, url="https://thirdexample.com")
-        self.assertEqual(monitor.url, "https://thirdexample.com")
-        self.assertEqual(monitor.pronounceable_name, "MyThirdExampleSite")

@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 setup(
     name='betterstack-uptime',
     packages=find_packages(include=['betterstack.uptime']),
-    version='1.0.0',
+    version='1.0.1',
     author='iWink',
     author_email='hosting@iwink.nl',
     description='Library for communicating with the BetterStack Uptime API',
@@ -16,9 +16,9 @@ setup(
     url="https://github.com/iwink/python-betterstack-uptime",
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Licence :: OSI Approved :: MIT Licence",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Licence :: OSI Approved :: GNU General Public Licence v3 (GPLv3)",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
     python_requires='>=3',
     install_requires=['requests'],

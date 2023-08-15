@@ -1,9 +1,28 @@
 # Python Betterstack-Uptime
 ![coverage](https://img.shields.io/badge/coverage-85%25-green)
 
-API Library for the Uptime module by Betterstack
+`betterstack-uptime` is a library written in python that can assist in dealing with the Betterstack Uptime API. This is done by converting API endpoints into python objects, and translating the attributes from the API into variables. 
+
+#### Current endpoints implemented
+- Monitors
+- Monitor SLA
+- Monitor Groups
+- Heartbeats
+- Heartbeat Groups
+- Incidents
+
+In future, there will be more endpoints added. These however, will need some extra code in order for them to work properly. If you desperately need another endpoint, feel free to extend the `BaseAPIObject` class, and implement it!
+
+`betterstack-uptime` is free and [open source](https://github.com/iwink/python-betterstack-uptime) software, you are free to use it, share it, modify it and share the modifications with the world. 
 
 ## Getting Started
+
+### Requirements
+
+You will need the following software:
+- `python>= 3.7`
+
+Older versions of python 3 should work, but are not guaranteed to work. 
 
 ### Installing
 
@@ -13,9 +32,9 @@ pip install betterstack-uptime
 ```
 ### Usage
 
-Just a quick boilerplate piece of code to get you started
+Just some quick boilerplate code to get you started
 
-#### Get all instances
+##### Get all instances
 ```python
 from betterstack.uptime import UptimeAPI
 from betterstack.uptime.objects import Montitor
@@ -26,39 +45,7 @@ monitors = Monitor.get_all_instances(api=api)
 for monitor in monitors:
     print(monitor.url)
 ```
-#### Get downtime for monitor
-```python
-from betterstack.uptime import UptimeAPI
-from betterstack.uptime.objects import Montitor
 
-start_date = "2023-07-14"
-end_date = "2023-08-14"
-
-api = UptimeAPI("yourtokenhere")
-monitor = Monitor(api=api, id=1234)
-monitor._sla.timeframe = (start_date, end_date)
-
-print(monitor._sla.availablilty)
-print(monitor._sla.total_downtime)
-print(monitor._sla.number_of_incidents)
-```
-
-#### Delete incident when header matches
-```python
-from betterstack.uptime import UptimeAPI
-from betterstack.uptime.objects import Incident
-
-api = UptimeAPI("yourtokenhere")
-incidents = Incident.get_all_instances(api=api)
-
-for incident in incidents:
-    if "SSL" in incident.cause and "expire soon" in incident.cause:
-        print("Almost expired SSL cert, %s %s" % (incident.started_at, incident.resolved_at), ", deleting")
-        incident.delete()
-    if hasattr(incident, "response_options") and incident.response_options and "someheader: someoption" in incident.response_options:
-        print("Deleting %s" % incident.name)
-        incident.delete()
-```
 
 ## Contributing
 
@@ -72,9 +59,8 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 * **Wouter Mellema** - *Initial work* - [wmellema](https://github.com/wmellema)
 
-See also the list of [contributors](https://github.com/iwink/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/iwink/python-betterstack-uptime/contributors) who participated in this project.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-

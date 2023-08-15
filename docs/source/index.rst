@@ -3,15 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Python-Betterstack-Uptime's documentation!
-=====================================================
+Python Betterstack Uptime Documentation
+=======================================
+
+
+.. mdinclude:: ../../README.md
 
 .. toctree::
-   :maxdepth: 5
-   :caption: Contents:
+   :maxdepth: 3
+   :glob:
+   :titlesonly:
+
+   */index
+   
 
 
-   betterstack.uptime
+
 
 Indices and tables
 ==================

@@ -13,7 +13,7 @@ setup(
     description='Library for communicating with the BetterStack Uptime API',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.om/iwink/betterstack-uptime",
+    url="https://github.com/iwink/python-betterstack-uptime",
     classifiers=[
         "Programming Language :: Python :: 3",
         "Licence :: OSI Approved :: MIT Licence",

@@ -18,7 +18,7 @@ release = '0.1.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx_rtd_theme']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx_rtd_theme', 'sphinx_mdinclude']
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -34,6 +34,12 @@ html_css_files = ['css/custom.css']
 
 autoclass_content = 'both'
 
+html_theme_options = {
+    'sticky_navigation': True,
+    'collapse_navigation': False,
+    'navigation_depth': 4,
+
+}
 autodoc_default_options = {
     'members': True,
     'member-order': 'bysource',

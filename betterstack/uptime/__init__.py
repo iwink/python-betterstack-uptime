@@ -20,7 +20,7 @@ class RESTAPI():
         '''
         Inialize RESTAPI
 
-        :param str base_url: The URL to be called, ending in a /
+        :param str base_url: The URL to be called, ending in a forward slash
         :param BearerAuth auth: Authentication class to be used with requests
         '''
 
@@ -31,9 +31,9 @@ class RESTAPI():
 
     def clean_params(self, parameters) -> Dict[str, any]:
         '''
-        Removes the trailing underscore in order to be able to use parameters
-
+        Removes the trailing underscore in order to be able to use parameters 
         like `from`
+
         :param dict parameters: A dict with all parameters to be cleaned
         :return: A dict with cleaned parameters
         :rtype: dict
@@ -120,6 +120,7 @@ class PaginatedAPI(RESTAPI):
     '''
     Specically used with paginated API views
     '''
+    
     def get(self, url: str, body: str=None, headers: Dict[str, any]=None, parameters: Dict[str, any]=None) -> Generator:
         '''
         Overrides the default behaviour, and checks for the pagination.next field.

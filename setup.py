@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='betterstack-uptime',
-    packages=find_packages(include=['betterstack.uptime']),
+    packages=find_packages(include=['betterstack','betterstack.uptime', 'betterstack.uptime.*']),
     version='1.0.1',
     author='iWink',
     author_email='hosting@iwink.nl',

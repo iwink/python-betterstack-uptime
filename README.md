@@ -37,7 +37,7 @@ Just some quick boilerplate code to get you started
 ##### Get all instances
 ```python
 from betterstack.uptime import UptimeAPI
-from betterstack.uptime.objects import Montitor
+from betterstack.uptime.objects import Monitor
 
 api = UptimeAPI("yourtokenhere")
 monitors = Monitor.get_all_instances(api=api)

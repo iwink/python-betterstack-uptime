@@ -5,7 +5,7 @@ Get downtime for monitor
 .. code-block:: python
 
     from betterstack.uptime import UptimeAPI
-    from betterstack.uptime.objects import Montitor
+    from betterstack.uptime.objects import Monitor
 
     start_date = "2023-07-14"
     end_date = "2023-08-14"

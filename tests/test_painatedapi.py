@@ -26,8 +26,7 @@ class PaginatedAPITests(unittest.TestCase):
 
             def json(self):
                 return self.json_data
-
-        if kwargs['url'] == 'http://some.weird/api/v2/test_json' and not kwargs['params']:
+        if kwargs['url'] == 'http://some.weird/api/v2/test_json':
             first_json = json.loads("""{
                 "data": [
                     {
@@ -35,14 +34,12 @@ class PaginatedAPITests(unittest.TestCase):
                     }
                 ],
                 "pagination": {
-                    "first": "https://betteruptime.com/api/v2/monitors?page=1",
-                    "last": "https://betteruptime.com/api/v2/monitors?page=2",
+                    "first": "http://some.weird/api/v2/test_json?page=1",
+                    "last": "http://some.weird/api/v2/test_json?page=2",
                     "prev": null,
                     "next": "http://some.weird/api/v2/test_json?page=2"
                 }
             }""")
-            return MockResponse(first_json, 200, True)
-        elif kwargs['url'] == 'http://some.weird/api/v2/test_json' and kwargs['params']['page'][0] == '2':
             second_json = json.loads("""{
                 "data": [
                     {
@@ -50,13 +47,19 @@ class PaginatedAPITests(unittest.TestCase):
                     }
                 ],
                 "pagination": {
-                    "first": "https://betteruptime.com/api/v2/monitors?page=1",
-                    "last": "https://betteruptime.com/api/v2/monitors?page=2",
+                    "first": "http://some.weird/api/v2/test_json?page=1",
+                    "last": "http://some.weird/api/v2/test_json?page=2",
                     "prev": null,
                     "next": null
                 }
             }""")
-            return MockResponse(second_json, 200, True)
+            if "params" in kwargs.keys() and "page" in kwargs['params'].keys():
+                pageno = kwargs['params']['page']
+                if pageno == 1:
+                    return MockResponse(first_json, 200, True)
+                elif pageno == 2:
+                    return MockResponse(second_json, 200, True)
+            return MockResponse(first_json, 200, True)
         return MockResponse(None, 404, False)
 
     def setUp(self):

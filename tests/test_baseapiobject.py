@@ -205,12 +205,14 @@ class MonitorTests(unittest.TestCase):
             sites = [site1['data'], site2['data']]
             if 'params' in kwargs.keys():
                 for k, v in kwargs['params'].items():
+                    if k == 'page':
+                        continue
                     sites = list(filter(lambda x: x['attributes'][k] == v, sites))
             lst = {
                 "data": sites,
                 "pagination": {
-                    "first": None,
-                    "last": None,
+                    "first": "https://uptime.betterstack.com/api/v2/?page=1",
+                    "last": "https://uptime.betterstack.com/api/v2/?page=1",
                     "prev": None,
                     "next": None
                 }
@@ -226,7 +228,6 @@ class MonitorTests(unittest.TestCase):
 
     @mock.patch('betterstack.uptime.requests.get', side_effect=mock_monitor_get)
     def test_get_all_instances(self, mock_get, *args):
-        print(args)
         monitors = Monitor.get_all_instances(self.api)
         self.assertEqual(len(list(monitors)), 2)
 

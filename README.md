@@ -1,5 +1,13 @@
 # Python Betterstack-Uptime
-![coverage](https://img.shields.io/badge/coverage-85%25-green)
+
+[![Python Lint/Test](https://github.com/iwink/python-betterstack-uptime/actions/workflows/python-lint-test.yml/badge.svg?branch=master)](https://github.com/iwink/python-betterstack-uptime/actions/workflows/python-lint-test.yml)
+[![Docs](https://github.com/iwink/python-betterstack-uptime/actions/workflows/documentation.yml/badge.svg?branch=master)](https://github.com/iwink/python-betterstack-uptime/actions/workflows/documentation.yml)
+![coverage](https://img.shields.io/badge/Coverage-85%25-green)
+
+[![version](https://img.shields.io/badge/Latest_version-1.0.2-blue)](https://pypi.org/project/betterstack-uptime/)
+![pythonversion](https://img.shields.io/badge/Python-3.7%20|%203.8%20|%203.9-blue?style=flat&logo=python&logoColor=white)
+![codestyle](https://img.shields.io/badge/Code_style-PEP8-blue)
+
 
 `betterstack-uptime` is a library written in python that can assist in dealing with the Betterstack Uptime API. This is done by converting API endpoints into python objects, and translating the attributes from the API into variables. 
 
@@ -22,7 +30,6 @@ In future, there will be more endpoints added. These however, will need some ext
 You will need the following software:
 - `python>= 3.7`
 
-Older versions of python 3 should work, but are not guaranteed to work. 
 
 ### Installing
 

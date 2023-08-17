@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import requests
+import multiprocessing
 
-from typing import Dict, Generator, Tuple
+from typing import Dict, Generator, Tuple, List
 from urllib.parse import urljoin, urlparse, parse_qs
 
 from .auth import BearerAuth
@@ -123,6 +124,23 @@ class PaginatedAPI(RESTAPI):
     Specically used with paginated API views
     '''
 
+    def return_monitors_for_page(self, url: str, body: str, headers: Dict[str, any] = None, parameters: Dict[str, any] = None, page: int = 1) -> List:
+        '''
+        Used for multitreading page GETs
+
+        :param str url: URL to be accessed
+        :param str body: Body of the request
+        :param dict headers: Header to be sent
+        :param dict parameters: URL parameters to be sent
+        :return: List of entries
+        :rtype: Generator
+        '''
+        if not parameters:
+            parameters = {}
+        parameters.update({'page': page})
+        data = super().get(url, body, headers, parameters)
+        return data['data']
+
     def get(self, url: str, body: str = None, headers: Dict[str, any] = None, parameters: Dict[str, any] = None) -> Generator:
         '''
         Overrides the default behaviour, and checks for the pagination.next field.
@@ -144,16 +162,26 @@ class PaginatedAPI(RESTAPI):
             yield data['data']
             return
 
-        # Return results of first page before recursing
-        for monitor in data['data']:
-            yield monitor
+        jobs = []
 
-        while data['pagination']['next']:
-            # Parse URL parameters so we can use it in a new request
-            parameters.update(parse_qs(urlparse(data['pagination']['next']).query))
-            data = super().get(url, body, headers, parameters)
-            for monitor in data['data']:
-                yield monitor
+        first_page = parse_qs(urlparse(data['pagination']['first']).query)['page'][0]
+        last_page = parse_qs(urlparse(data['pagination']['last']).query)['page'][0]
+        if first_page == last_page:
+            pages = [1]
+        else:
+            pages = range(
+                int(first_page),
+                int(last_page) + 1
+            )
+
+        for page in pages:
+            jobs.append((url, body, headers, parameters, page))
+
+        with multiprocessing.Pool() as pool:
+            answers = pool.starmap(self.return_monitors_for_page, jobs)
+
+            for answer in answers:
+                yield from answer
 
 
 class UptimeAPI(PaginatedAPI):

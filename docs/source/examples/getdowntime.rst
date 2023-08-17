@@ -14,6 +14,6 @@ Get downtime for monitor
     monitor = Monitor(api=api, id=1234)
     monitor._sla.timeframe = (start_date, end_date)
 
-    print(monitor._sla.availablilty)
+    print(monitor._sla.availability)
     print(monitor._sla.total_downtime)
     print(monitor._sla.number_of_incidents)

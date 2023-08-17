@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 setup(
     name='betterstack-uptime',
     packages=find_packages(include=['betterstack', 'betterstack.uptime', 'betterstack.uptime.*']),
-    version='1.0.2',
+    version='1.0.3',
     author='iWink',
     author_email='hosting@iwink.nl',
     description='Library for communicating with the BetterStack Uptime API',

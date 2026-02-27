@@ -1,15 +1,15 @@
 import unittest
 
-from betterstack.uptime.helpers import filter_on_attribute
+from betterstack.uptime import filter_on_attribute
 
 
-class TestStringMethods(unittest.TestCase):
+class TestFilterOnAttribute(unittest.TestCase):
     def setUp(self):
-        class TestClass():
-            def __init__(self, *args, **kwargs):
+        class TestClass:
+            def __init__(self, **kwargs):
                 for k, v in kwargs.items():
-                    print("Setting", k, v)
                     setattr(self, k, v)
+
         self.test_instance_1 = TestClass(test1="hello", test2="world")
         self.test_instance_2 = TestClass(test1="hello", test2="World!")
         self.test_instance_3 = TestClass(test3="Hello, World!")

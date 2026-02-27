@@ -10,16 +10,9 @@ Example:
     ...     print(f"{monitor.pronounceable_name}: {monitor.status}")
 """
 
-# API client classes
-from .api import PaginatedAPI, RESTAPI, UptimeAPI
-
-# Authentication
+from .api import RESTAPI, PaginatedAPI, UptimeAPI
 from .auth import BearerAuth
-
-# Base class
 from .base import BaseAPIObject
-
-# Exceptions
 from .exceptions import (
     APIError,
     AuthenticationError,
@@ -31,11 +24,7 @@ from .exceptions import (
     ServerError,
     ValidationError,
 )
-
-# Helper utilities
 from .helpers import filter_on_attribute
-
-# API objects
 from .objects import (
     EscalationPolicy,
     Heartbeat,
@@ -54,41 +43,35 @@ from .objects import (
 )
 
 __all__ = [
-    # API clients
     "RESTAPI",
-    "PaginatedAPI",
-    "UptimeAPI",
-    # Authentication
-    "BearerAuth",
-    # Base class
-    "BaseAPIObject",
-    # Exceptions
     "APIError",
     "AuthenticationError",
+    "BaseAPIObject",
+    "BearerAuth",
     "BetterStackError",
     "ConfigurationError",
-    "ForbiddenError",
-    "NotFoundError",
-    "RateLimitError",
-    "ServerError",
-    "ValidationError",
-    # Helpers
-    "filter_on_attribute",
-    # Objects
     "EscalationPolicy",
+    "ForbiddenError",
     "Heartbeat",
     "HeartbeatGroup",
     "Incident",
     "Monitor",
     "MonitorGroup",
     "MonitorSLA",
+    "NotFoundError",
     "OnCallCalendar",
     "OnCallEvent",
+    "PaginatedAPI",
     "PolicyStep",
+    "RateLimitError",
+    "ServerError",
     "StatusPage",
     "StatusPageGroup",
     "StatusPageResource",
     "StatusPageSection",
+    "UptimeAPI",
+    "ValidationError",
+    "filter_on_attribute",
 ]
 
 __version__ = "2.0.0"

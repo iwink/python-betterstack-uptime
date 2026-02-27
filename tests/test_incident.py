@@ -8,7 +8,6 @@ from betterstack.uptime import UptimeAPI
 from betterstack.uptime.objects import Incident
 from tests.fixtures import V3_BASE_URL, make_paginated_response
 
-
 # Incident fixture data (v3 API format)
 INCIDENT_1 = {
     "data": {

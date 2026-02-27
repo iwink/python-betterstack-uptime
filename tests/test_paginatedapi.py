@@ -4,7 +4,7 @@ import unittest
 
 import responses
 
-from betterstack.uptime import PaginatedAPI, BearerAuth
+from betterstack.uptime import BearerAuth, PaginatedAPI
 from tests.fixtures import TEST_BASE_URL
 
 

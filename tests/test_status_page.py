@@ -131,7 +131,7 @@ class TestStatusPage(unittest.TestCase):
         self.assertEqual(len(sections), 1)
 
         # Second access uses cache (no additional request)
-        sections_again = status_page.sections
+        _ = status_page.sections
         self.assertEqual(len(responses.calls), 1)  # Only one API call made
 
     @responses.activate
@@ -194,7 +194,7 @@ class TestStatusPage(unittest.TestCase):
         self.assertEqual(len(resources), 1)
 
         # Second access uses cache
-        resources_again = status_page.resources
+        _ = status_page.resources
         self.assertEqual(len(responses.calls), 1)
 
 

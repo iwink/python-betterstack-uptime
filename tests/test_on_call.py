@@ -150,7 +150,7 @@ class TestOnCallCalendar(unittest.TestCase):
         self.assertEqual(len(events), 1)
 
         # Second access uses cache
-        events_again = calendar.events
+        _ = calendar.events
         self.assertEqual(len(responses.calls), 1)
 
     @responses.activate

@@ -7,7 +7,7 @@ import responses
 from betterstack.uptime import UptimeAPI
 from betterstack.uptime.objects import EscalationPolicy, PolicyStep
 
-from .fixtures import BASE_URL, make_paginated_response
+from .fixtures import make_paginated_response
 
 
 class TestEscalationPolicy(unittest.TestCase):

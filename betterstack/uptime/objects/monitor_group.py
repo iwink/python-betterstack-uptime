@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, ClassVar
 from ..base import BaseAPIObject
 
 if TYPE_CHECKING:
-    from ..api import RESTAPI
     from .monitor import Monitor
 
 

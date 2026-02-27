@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, ClassVar, Generator
+from typing import TYPE_CHECKING, Any, ClassVar
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -15,7 +16,7 @@ from .exceptions import ValidationError
 from .helpers import filter_on_attribute
 
 if TYPE_CHECKING:
-    from .api import PaginatedAPI, RESTAPI
+    from .api import RESTAPI, PaginatedAPI
 
 
 @dataclass

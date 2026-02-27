@@ -8,7 +8,6 @@ from betterstack.uptime import UptimeAPI
 from betterstack.uptime.objects import HeartbeatGroup
 from tests.fixtures import BASE_URL, make_paginated_response
 
-
 # HeartbeatGroup fixture data
 HEARTBEAT_GROUP_1 = {
     "data": {

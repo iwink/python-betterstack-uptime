@@ -2,9 +2,9 @@
 
 import pytest
 
-from betterstack.uptime import BearerAuth, PaginatedAPI, RESTAPI, UptimeAPI
+from betterstack.uptime import RESTAPI, BearerAuth, PaginatedAPI, UptimeAPI
 
-from .fixtures import TEST_BASE_URL  # noqa: F401 - re-export for tests
+from .fixtures import TEST_BASE_URL
 
 
 @pytest.fixture

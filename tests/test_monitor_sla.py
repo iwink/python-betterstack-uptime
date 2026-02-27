@@ -8,7 +8,6 @@ from betterstack.uptime import UptimeAPI
 from betterstack.uptime.objects import Monitor, MonitorSLA
 from tests.fixtures import BASE_URL, MONITOR_1
 
-
 # MonitorSLA fixture data - single object response (not paginated)
 SLA_RESPONSE = {
     "data": {

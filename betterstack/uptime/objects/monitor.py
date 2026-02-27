@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from ..base import BaseAPIObject
 
 if TYPE_CHECKING:
-    from ..api import RESTAPI
+    pass
 
 
 @dataclass

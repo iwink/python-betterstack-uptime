@@ -8,7 +8,6 @@ from betterstack.uptime import UptimeAPI
 from betterstack.uptime.objects import MonitorGroup
 from tests.fixtures import BASE_URL, MONITOR_1, MONITOR_2, make_paginated_response
 
-
 # MonitorGroup fixture data
 MONITOR_GROUP_1 = {
     "data": {

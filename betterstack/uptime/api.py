@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Generator
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 from urllib.parse import parse_qs, urljoin, urlparse
 
@@ -268,8 +269,34 @@ class PaginatedAPI(RESTAPI):
     """REST API client that handles paginated responses.
 
     This class extends RESTAPI to automatically follow pagination links
-    and yield all results across multiple pages.
+    and yield all results across multiple pages. Supports concurrent
+    fetching of pages for improved performance.
+
+    Attributes:
+        max_workers: Maximum number of threads for concurrent page fetching.
     """
+
+    def __init__(
+        self,
+        base_url: str,
+        auth: BearerAuth,
+        retries: int = 3,
+        backoff_factor: float = 0.5,
+        timeout: float = 30.0,
+        max_workers: int = 5,
+    ) -> None:
+        """Initialize PaginatedAPI with threading configuration.
+
+        Args:
+            base_url: The URL to be called, must end with a forward slash.
+            auth: Authentication class to be used with requests.
+            retries: Number of retries for failed requests.
+            backoff_factor: Backoff factor for retry delays.
+            timeout: Default timeout for requests in seconds.
+            max_workers: Maximum number of threads for concurrent page fetching.
+        """
+        super().__init__(base_url, auth, retries, backoff_factor, timeout)
+        self.max_workers = max_workers
 
     def get(
         self,
@@ -278,11 +305,11 @@ class PaginatedAPI(RESTAPI):
         headers: dict[str, Any] | None = None,
         parameters: dict[str, Any] | None = None,
     ) -> Generator[dict[str, Any], None, None]:
-        """Perform a GET request with automatic pagination.
+        """Perform a GET request with automatic pagination and concurrent fetching.
 
-        This method overrides the default GET behavior to handle paginated
-        responses. It follows pagination.next links until all pages are
-        retrieved.
+        This method fetches the first page to determine total pages, then
+        fetches remaining pages concurrently using a thread pool. Results
+        are yielded in page order.
 
         Args:
             url: URL path to access (relative to base_url).
@@ -293,9 +320,11 @@ class PaginatedAPI(RESTAPI):
         Yields:
             Individual items from the response data array.
         """
-        data = super().get(url, body, headers, parameters)
         if parameters is None:
             parameters = {}
+
+        # Fetch first page to get pagination info
+        data = super().get(url, body, headers, parameters)
 
         # For single objects, yield and return
         if isinstance(data.get("data"), dict):
@@ -306,29 +335,109 @@ class PaginatedAPI(RESTAPI):
         for item in data.get("data", []):
             yield item
 
-        # Follow pagination links
+        # Check if there are more pages
+        pagination = data.get("pagination", {})
+        if not pagination.get("next"):
+            return
+
+        # Determine total pages from first response
+        # BetterStack API includes pagination info with page counts
+        total_pages = self._get_total_pages(pagination)
+
+        if total_pages is None:
+            # Fall back to sequential fetching if we can't determine total pages
+            yield from self._fetch_pages_sequential(url, headers, parameters, data)
+            return
+
+        if total_pages <= 1:
+            return
+
+        # Fetch remaining pages concurrently
+        pages_data: dict[int, list[dict[str, Any]]] = {}
+
+        # Capture parent's get method before entering executor context
+        parent_get = super().get
+
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = {
+                executor.submit(parent_get, url, None, headers, {**parameters, "page": page}): page
+                for page in range(2, total_pages + 1)
+            }
+
+            for future in as_completed(futures):
+                page_num = futures[future]
+                page_data = future.result()
+                pages_data[page_num] = page_data.get("data", [])
+
+        # Yield results in page order
+        for page_num in sorted(pages_data.keys()):
+            for item in pages_data[page_num]:
+                yield item
+
+    def _get_total_pages(self, pagination: dict[str, Any]) -> int | None:
+        """Extract total page count from pagination info.
+
+        Args:
+            pagination: Pagination dictionary from API response.
+
+        Returns:
+            Total number of pages, or None if not determinable.
+        """
+        # Try to get last page URL and extract page number
+        last_url = pagination.get("last")
+        if last_url:
+            parsed = urlparse(last_url)
+            params = parse_qs(parsed.query)
+            if "page" in params:
+                try:
+                    return int(params["page"][0])
+                except (ValueError, IndexError):
+                    pass
+        return None
+
+    def _fetch_pages_sequential(
+        self,
+        url: str,
+        headers: dict[str, Any] | None,
+        parameters: dict[str, Any],
+        current_data: dict[str, Any],
+    ) -> Generator[dict[str, Any], None, None]:
+        """Fetch pages sequentially when total pages is unknown.
+
+        Args:
+            url: URL path to access.
+            headers: Additional headers to send.
+            parameters: Base URL query parameters.
+            current_data: Current page data with pagination info.
+
+        Yields:
+            Individual items from response data arrays.
+        """
+        data = current_data
         while data.get("pagination", {}).get("next"):
             next_url = data["pagination"]["next"]
-            # Parse URL parameters from the next link
             parsed = urlparse(next_url)
             page_params = parse_qs(parsed.query)
-            # Flatten list values from parse_qs
-            parameters.update({k: v[0] if len(v) == 1 else v for k, v in page_params.items()})
+            params = {**parameters}
+            params.update({k: v[0] if len(v) == 1 else v for k, v in page_params.items()})
 
-            data = super().get(url, body, headers, parameters)
-            for item in data.get("data", []):
-                yield item
+            data = super().get(url, None, headers, params)
+            yield from data.get("data", [])
 
 
 class UptimeAPI(PaginatedAPI):
     """BetterStack Uptime API client.
 
     This is the main client class for interacting with the BetterStack
-    Uptime API. It is pre-configured with the correct base URL.
+    Uptime API. It is pre-configured with the correct base URL and supports
+    concurrent fetching of paginated results.
 
     Example:
         >>> api = UptimeAPI("your-bearer-token")
         >>> monitors = list(Monitor.get_all_instances(api))
+
+    Attributes:
+        BETTERSTACK_API_URL: The base URL for the BetterStack Uptime API.
     """
 
     BETTERSTACK_API_URL = "https://uptime.betterstack.com/api/v2/"
@@ -339,6 +448,7 @@ class UptimeAPI(PaginatedAPI):
         retries: int = 3,
         backoff_factor: float = 0.5,
         timeout: float = 30.0,
+        max_workers: int = 5,
     ) -> None:
         """Initialize UptimeAPI with bearer token authentication.
 
@@ -347,6 +457,7 @@ class UptimeAPI(PaginatedAPI):
             retries: Number of retries for failed requests.
             backoff_factor: Backoff factor for retry delays.
             timeout: Default timeout for requests in seconds.
+            max_workers: Maximum number of threads for concurrent page fetching.
         """
         super().__init__(
             base_url=self.BETTERSTACK_API_URL,
@@ -354,4 +465,5 @@ class UptimeAPI(PaginatedAPI):
             retries=retries,
             backoff_factor=backoff_factor,
             timeout=timeout,
+            max_workers=max_workers,
         )

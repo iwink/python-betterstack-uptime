@@ -25,15 +25,12 @@ class Monitor(BaseAPIObject):
     Attributes:
         url: The URL of your website or the host you want to ping.
         pronounceable_name: Human-readable name used in phone call alerts.
-        monitor_type: Type of monitor. Valid values: 'status', 'expected_status_code',
-            'keyword', 'keyword_absence', 'ping', 'tcp', 'udp', 'smtp', 'pop',
-            'imap', 'dns', 'playwright'.
+        monitor_type: Type of monitor (e.g., 'status', 'keyword', 'ping', 'tcp').
         monitor_group_id: ID of the monitor group this monitor belongs to.
         last_checked_at: When the monitor was last checked (ISO 8601 datetime).
-        status: Current status. Valid values: 'up', 'down', 'validating', 'paused',
-            'pending', 'maintenance'.
+        status: Current status (e.g., 'up', 'down', 'paused', 'maintenance').
         policy_id: The escalation policy ID for this monitor.
-        expiration_policy_id: The expiration escalation policy ID (for SSL/domain checks).
+        expiration_policy_id: The expiration escalation policy ID.
         team_name: The team this monitor is in.
         required_keyword: Keyword that must be present (for keyword/udp monitors).
         verify_ssl: Whether to verify SSL certificate validity.
@@ -44,21 +41,21 @@ class Monitor(BaseAPIObject):
         push: Whether to send push notifications on incidents.
         critical_alert: Whether to send critical alert push notifications.
         team_wait: Seconds to wait before escalating to the team.
-        http_method: HTTP method for requests. Valid: 'GET', 'HEAD', 'POST', 'PUT', 'PATCH'.
-        request_timeout: Request timeout (seconds for HTTP, milliseconds for server monitors).
+        http_method: HTTP method for requests (e.g., 'GET', 'POST').
+        request_timeout: Request timeout in seconds (or ms for server monitors).
         recovery_period: Seconds before marking incident as resolved after recovery.
         request_headers: Array of custom HTTP headers with 'name' and 'value' properties.
-        request_body: Request body for POST/PUT/PATCH requests, or domain for DNS monitors.
+        request_body: Request body for POST/PUT/PATCH, or domain for DNS monitors.
         paused_at: When the monitor was paused (ISO 8601 datetime), null if not paused.
         created_at: When the monitor was created (ISO 8601 datetime).
         updated_at: When the monitor was last updated (ISO 8601 datetime).
-        ssl_expiration: Days before SSL expiration to alert. Values: null, 1, 2, 3, 7, 14, 30, 60.
-        domain_expiration: Days before domain expiration to alert. Values: null, 1, 2, 3, 7, 14, 30, 60.
-        regions: Array of regions to check from. Valid: 'us', 'eu', 'as', 'au'.
+        ssl_expiration: Days before SSL expiration to alert.
+        domain_expiration: Days before domain expiration to alert.
+        regions: Array of regions to check from (e.g., 'us', 'eu', 'as', 'au').
         port: Port for TCP/UDP/SMTP/POP/IMAP monitors.
         confirmation_period: Seconds to wait after failure before starting incident.
         expected_status_codes: Array of acceptable HTTP status codes.
-        maintenance_days: Array of maintenance days. Valid: 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'.
+        maintenance_days: Array of maintenance days (e.g., 'mon', 'tue', 'wed').
         maintenance_from: Start of daily maintenance window (e.g., '01:00:00').
         maintenance_to: End of daily maintenance window (e.g., '03:00:00').
         maintenance_timezone: Timezone for maintenance window.

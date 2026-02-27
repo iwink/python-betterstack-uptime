@@ -75,6 +75,10 @@ Incidents
    :exclude-members: type
    :no-index:
 
+.. note::
+   Incidents use the BetterStack v3 API endpoint (``/api/v3/incidents``) which provides
+   additional filtering capabilities and attributes compared to the v2 API.
+
 Status Pages
 ------------
 

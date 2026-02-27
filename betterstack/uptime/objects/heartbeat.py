@@ -25,8 +25,7 @@ class Heartbeat(BaseAPIObject):
         sms: Whether to send SMS on incidents.
         email: Whether to send emails on incidents.
         push: Whether to send push notifications on incidents.
-        critical_alert: Whether to send as a critical/high-urgency alert
-            (bypasses Do Not Disturb on supported devices).
+        critical_alert: Whether to send as a critical/high-urgency alert.
         team_wait: Seconds to wait before escalating to the team.
         heartbeat_group_id: ID of the heartbeat group this belongs to.
         team_name: The team that owns this heartbeat (for filtering).
@@ -37,8 +36,7 @@ class Heartbeat(BaseAPIObject):
         status: Current status of the heartbeat (e.g., "up", "down", "paused").
         maintenance_from: Start time of the maintenance window (HH:MM:SS format).
         maintenance_to: End time of the maintenance window (HH:MM:SS format).
-        maintenance_timezone: Timezone for the maintenance window
-            (e.g., "America/New_York").
+        maintenance_timezone: Timezone for the maintenance window.
         maintenance_days: List of days for maintenance (e.g., ["mon", "tue"]).
         policy_id: ID of the escalation policy for this heartbeat.
     """

@@ -158,7 +158,7 @@ class BaseAPIObject:
         return cls._url_endpoint
 
     def fetch_data(self, **kwargs: Any) -> None:
-        """Fetch all attributes from the API.
+        r"""Fetch all attributes from the API.
 
         Args:
             \*\*kwargs: Additional parameters for the API request.
@@ -196,7 +196,7 @@ class BaseAPIObject:
 
     @classmethod
     def get_or_create(cls, api: RESTAPI, **kwargs: Any) -> tuple[bool, Self]:
-        """Get an existing object or create a new one.
+        r"""Get an existing object or create a new one.
 
         Attempts to find an object matching the given attributes. If no match
         is found, creates a new object with those attributes.
@@ -231,7 +231,7 @@ class BaseAPIObject:
 
     @classmethod
     def new(cls, api: RESTAPI, **kwargs: Any) -> Self:
-        """Create a new object on the API.
+        r"""Create a new object on the API.
 
         Args:
             api: API instance.
@@ -246,7 +246,7 @@ class BaseAPIObject:
 
     @classmethod
     def filter(cls, api: RESTAPI, **kwargs: Any) -> Generator[Self, None, None]:
-        """Filter objects using URL query parameters.
+        r"""Filter objects using URL query parameters.
 
         Args:
             api: API instance.

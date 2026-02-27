@@ -24,16 +24,14 @@ class Incident(BaseAPIObject):
         name: The name/title of the incident.
         url: The URL that triggered the incident (for URL monitors).
         http_method: The HTTP method used when the incident was detected.
-        cause: The cause of the incident (e.g., "Keyword not found",
-            "HTTP 500", "Connection timeout").
+        cause: The cause of the incident (e.g., "Keyword not found").
         incident_group_id: ID of the incident group this incident belongs to.
         started_at: When the incident started (ISO 8601 format).
         acknowledged_at: When the incident was acknowledged (ISO 8601 format).
         acknowledged_by: Name of who acknowledged the incident.
         resolved_at: When the incident was resolved (ISO 8601 format).
         resolved_by: Name of who resolved the incident.
-        status: Current status of the incident (e.g., "Started", "Acknowledged",
-            "Resolved").
+        status: Current status of the incident (e.g., "Started", "Resolved").
         team_name: The team that owns this incident (for filtering).
         response_content: The response body content when the incident occurred.
         response_url: The final URL after any redirects.
@@ -42,9 +40,8 @@ class Incident(BaseAPIObject):
         screenshot_url: URL to a screenshot taken during the incident.
         origin_url: The original URL before any redirects.
         escalation_policy_id: ID of the escalation policy that was triggered.
-        ssl_certificate_expires_at: When the SSL certificate expires
-            (for SSL expiration incidents).
-        domain_expires_at: When the domain expires (for domain expiration incidents).
+        ssl_certificate_expires_at: When the SSL certificate expires.
+        domain_expires_at: When the domain expires.
         call: Whether phone calls were made for this incident.
         sms: Whether SMS was sent for this incident.
         email: Whether email was sent for this incident.

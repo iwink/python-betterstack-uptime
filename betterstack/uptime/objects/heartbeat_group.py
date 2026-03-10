@@ -56,6 +56,8 @@ class HeartbeatGroup(BaseAPIObject):
 
     def fetch_heartbeats(self) -> None:
         """Fetch all heartbeats belonging to this group."""
+        if self._api is None:
+            raise ValueError("API not set")
         from .heartbeat import Heartbeat
 
         data = self._api.get(f"{self.generate_url()}/heartbeats")

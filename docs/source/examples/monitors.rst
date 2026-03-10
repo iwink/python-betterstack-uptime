@@ -92,7 +92,7 @@ Get Monitor SLA Data
 
         print(f"{monitor.url}:")
         print(f"  Availability: {sla.availability}%")
-        print(f"  Total downtime: {sla.total_downtime}s")
+        print(f"  Total downtime: {sla.downtime_duration}s")
         print(f"  Incidents: {sla.number_of_incidents}")
 
         # Change timeframe for SLA calculation

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from ..base import BaseAPIObject
 
 if TYPE_CHECKING:
-    from ..api import RESTAPI
+    from ..api import PaginatedAPI
 
 
 @dataclass
@@ -40,7 +40,7 @@ class OnCallCalendar(BaseAPIObject):
     @classmethod
     def _from_api_response(
         cls,
-        api: RESTAPI | None,
+        api: PaginatedAPI,
         data: dict[str, Any],
     ) -> OnCallCalendar:
         """Create an OnCallCalendar from API response data.

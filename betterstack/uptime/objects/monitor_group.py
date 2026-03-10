@@ -55,6 +55,8 @@ class MonitorGroup(BaseAPIObject):
 
     def fetch_monitors(self) -> None:
         """Fetch all monitors belonging to this group."""
+        if self._api is None:
+            raise ValueError("API not set")
         from .monitor import Monitor
 
         data = self._api.get(f"{self.generate_url()}/monitors")

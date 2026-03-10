@@ -50,7 +50,7 @@ Filter Incidents by Time Range
     # Get incidents from a specific time range
     for incident in Incident.filter(
         api,
-        from_date="2024-01-01",
+        from_="2024-01-01",
         to="2024-01-31"
     ):
         print(f"{incident.name}: {incident.status}")

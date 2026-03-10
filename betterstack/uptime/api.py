@@ -129,9 +129,13 @@ class RESTAPI:
             raise NotFoundError(message)
         elif status_code == 429:
             retry_after = response.headers.get("Retry-After")
+            try:
+                retry_after_seconds = int(retry_after) if retry_after else None
+            except (ValueError, TypeError):
+                retry_after_seconds = None
             raise RateLimitError(
                 message,
-                retry_after=int(retry_after) if retry_after else None,
+                retry_after=retry_after_seconds,
             )
         elif status_code >= 500:
             raise ServerError(message, status_code)

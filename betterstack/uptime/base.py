@@ -16,7 +16,7 @@ from .exceptions import ValidationError
 from .helpers import filter_on_attribute
 
 if TYPE_CHECKING:
-    from .api import RESTAPI, PaginatedAPI
+    from .api import PaginatedAPI
 
 
 @dataclass
@@ -40,8 +40,8 @@ class BaseAPIObject:
     """
 
     # Instance fields
-    id: int
-    _api: RESTAPI = field(repr=False, compare=False)
+    id: str
+    _api: PaginatedAPI = field(repr=False, compare=False)
     _extras: dict[str, Any] = field(default_factory=dict, repr=False, compare=False)
     _original_values: dict[str, Any] = field(default_factory=dict, repr=False, compare=False)
 
@@ -196,7 +196,7 @@ class BaseAPIObject:
         self._api.delete(url=self.generate_url())
 
     @classmethod
-    def get_or_create(cls, api: RESTAPI, **kwargs: Any) -> tuple[bool, Self]:
+    def get_or_create(cls, api: PaginatedAPI, **kwargs: Any) -> tuple[bool, Self]:
         r"""Get an existing object or create a new one.
 
         Attempts to find an object matching the given attributes. If no match
@@ -231,7 +231,7 @@ class BaseAPIObject:
             return False, instances[0]
 
     @classmethod
-    def new(cls, api: RESTAPI, **kwargs: Any) -> Self:
+    def new(cls, api: PaginatedAPI, **kwargs: Any) -> Self:
         r"""Create a new object on the API.
 
         Args:
@@ -246,11 +246,11 @@ class BaseAPIObject:
         return cls._from_api_response(api, response_data["data"])
 
     @classmethod
-    def filter(cls, api: RESTAPI, **kwargs: Any) -> Generator[Self, None, None]:
+    def filter(cls, api: PaginatedAPI, **kwargs: Any) -> Generator[Self, None, None]:
         r"""Filter objects using URL query parameters.
 
         Args:
-            api: API instance.
+            api: API instance with pagination support.
             \*\*kwargs: Query parameters to filter by.
 
         Yields:
@@ -260,8 +260,7 @@ class BaseAPIObject:
             ValidationError: If a filter parameter is not allowed.
         """
         cls._validate_query_options(**kwargs)
-        data = api.get(cls.generate_global_url(), parameters=kwargs)
-        for item in data:
+        for item in api.get(cls.generate_global_url(), parameters=kwargs):
             yield cls._from_api_response(api, item)
 
     @classmethod
@@ -278,7 +277,7 @@ class BaseAPIObject:
             yield cls._from_api_response(api, item)
 
     @classmethod
-    def _from_api_response(cls, api: RESTAPI, data: dict[str, Any]) -> Self:
+    def _from_api_response(cls, api: PaginatedAPI, data: dict[str, Any]) -> Self:
         """Create an instance from API response data.
 
         This factory method handles the conversion from API JSON to
@@ -317,7 +316,8 @@ class BaseAPIObject:
             raise ValidationError(f"{cls.__name__} does not support filtering")
 
         for key in kwargs.keys():
-            if key not in cls._allowed_query_parameters:
+            clean_key = key.rstrip("_") if key.endswith("_") else key
+            if clean_key not in cls._allowed_query_parameters:
                 raise ValidationError(
                     f"'{key}' is not a valid query parameter for {cls.__name__}. "
                     f"Allowed: {cls._allowed_query_parameters}"

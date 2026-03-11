@@ -1,5 +1,6 @@
 """Tests for PaginatedAPI class."""
 
+import json
 import unittest
 
 import responses
@@ -128,11 +129,8 @@ class TestPaginatedAPI(unittest.TestCase):
     @responses.activate
     def test_get_concurrent_multiple_pages(self):
         """Test concurrent fetching of multiple pages."""
-        # First page response with pagination info showing 3 total pages
-        responses.add(
-            responses.GET,
-            f"{TEST_BASE_URL}test_json",
-            json={
+        page_responses = {
+            None: {
                 "data": [{"id": "1", "name": "item1"}],
                 "pagination": {
                     "first": f"{TEST_BASE_URL}test_json?page=1",
@@ -141,14 +139,16 @@ class TestPaginatedAPI(unittest.TestCase):
                     "next": f"{TEST_BASE_URL}test_json?page=2",
                 },
             },
-            status=200,
-        )
-
-        # Second page response
-        responses.add(
-            responses.GET,
-            f"{TEST_BASE_URL}test_json",
-            json={
+            "1": {
+                "data": [{"id": "1", "name": "item1"}],
+                "pagination": {
+                    "first": f"{TEST_BASE_URL}test_json?page=1",
+                    "last": f"{TEST_BASE_URL}test_json?page=3",
+                    "prev": None,
+                    "next": f"{TEST_BASE_URL}test_json?page=2",
+                },
+            },
+            "2": {
                 "data": [{"id": "2", "name": "item2"}],
                 "pagination": {
                     "first": f"{TEST_BASE_URL}test_json?page=1",
@@ -157,14 +157,7 @@ class TestPaginatedAPI(unittest.TestCase):
                     "next": f"{TEST_BASE_URL}test_json?page=3",
                 },
             },
-            status=200,
-        )
-
-        # Third page response
-        responses.add(
-            responses.GET,
-            f"{TEST_BASE_URL}test_json",
-            json={
+            "3": {
                 "data": [{"id": "3", "name": "item3"}],
                 "pagination": {
                     "first": f"{TEST_BASE_URL}test_json?page=1",
@@ -173,7 +166,22 @@ class TestPaginatedAPI(unittest.TestCase):
                     "next": None,
                 },
             },
-            status=200,
+        }
+
+        def page_callback(request):
+            from urllib.parse import parse_qs, urlparse
+
+            parsed = urlparse(request.url)
+            params = parse_qs(parsed.query)
+            page = params.get("page", [None])[0]
+            body = page_responses.get(page, page_responses[None])
+            return (200, {}, json.dumps(body))
+
+        responses.add_callback(
+            responses.GET,
+            f"{TEST_BASE_URL}test_json",
+            callback=page_callback,
+            content_type="application/json",
         )
 
         resp = list(self.api.get("test_json"))

@@ -116,7 +116,10 @@ class RESTAPI:
         status_code = response.status_code
         try:
             error_body = response.json()
-            message = error_body.get("error", response.reason)
+            if isinstance(error_body, dict):
+                message = error_body.get("error", response.reason)
+            else:
+                message = response.reason or f"HTTP {status_code}"
         except (ValueError, KeyError):
             error_body = None
             message = response.reason or f"HTTP {status_code}"

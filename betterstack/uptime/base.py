@@ -93,6 +93,9 @@ class BaseAPIObject:
         for f in dataclass_fields(cls):
             if not f.name.startswith("_") and f.name != "id":
                 known.add(f.name)
+
+        # Cache per-class to avoid recomputation
+        cls._known_fields = known
         return known
 
     def _set_attribute(self, name: str, value: Any) -> None:

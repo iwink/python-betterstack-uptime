@@ -60,7 +60,7 @@ class RateLimitError(APIError):
 
     def __str__(self) -> str:
         base = super().__str__()
-        if self.retry_after:
+        if self.retry_after is not None:
             return f"{base} (retry after {self.retry_after}s)"
         return base
 

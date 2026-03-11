@@ -1,17 +1,13 @@
 # Python Betterstack-Uptime
 
-[![Python Lint/Test](https://github.com/iwink/python-betterstack-uptime/actions/workflows/python-lint-test.yml/badge.svg?branch=master)](https://github.com/iwink/python-betterstack-uptime/actions/workflows/python-lint-test.yml)
-[![Docs](https://github.com/iwink/python-betterstack-uptime/actions/workflows/documentation.yml/badge.svg?branch=master)](https://github.com/iwink/python-betterstack-uptime/actions/workflows/documentation.yml)
-![coverage](https://img.shields.io/badge/Coverage-85%25-green)
+![coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)
 
-[![version](https://img.shields.io/badge/Latest_version-1.0.2-blue)](https://pypi.org/project/betterstack-uptime/)
-![pythonversion](https://img.shields.io/badge/Python-3.7%20|%203.8%20|%203.9-blue?style=flat&logo=python&logoColor=white)
-![codestyle](https://img.shields.io/badge/Code_style-PEP8-blue)
+`betterstack-uptime` is a library written in python that can assist in dealing with the Betterstack Uptime API. This is done by converting API endpoints into python objects, and translating the attributes from the API into variables.
 
+## Current endpoints implemented
 
-`betterstack-uptime` is a library written in python that can assist in dealing with the Betterstack Uptime API. This is done by converting API endpoints into python objects, and translating the attributes from the API into variables. 
+### Monitoring
 
-#### Current endpoints implemented
 - Monitors
 - Monitor SLA
 - Monitor Groups
@@ -19,29 +15,47 @@
 - Heartbeat Groups
 - Incidents
 
-In future, there will be more endpoints added. These however, will need some extra code in order for them to work properly. If you desperately need another endpoint, feel free to extend the `BaseAPIObject` class, and implement it!
+### Status Pages
 
-`betterstack-uptime` is free and [open source](https://github.com/iwink/python-betterstack-uptime) software, you are free to use it, share it, modify it and share the modifications with the world. 
+- Status Pages
+- Status Page Sections
+- Status Page Resources
+- Status Page Groups
+
+### On-call & Escalations
+
+- On-Call Calendars
+- On-Call Events
+- Escalation Policies (v3 API)
+
+If you need another endpoint, feel free to extend the `BaseAPIObject` class and implement it!
+
+`betterstack-uptime` is free and [open source](https://github.com/iwink/python-betterstack-uptime) software, you are free to use it, share it, modify it and share the modifications with the world.
 
 ## Getting Started
 
 ### Requirements
 
 You will need the following software:
-- `python>= 3.7`
 
+- `python >= 3.10`
+
+Python 3.10+ is required for type hint syntax support.
 
 ### Installing
 
 Run the following command to install the package
+
 ```bash
 pip install betterstack-uptime
 ```
+
 ### Usage
 
 Just some quick boilerplate code to get you started
 
-##### Get all instances
+#### Get all instances
+
 ```python
 from betterstack.uptime import UptimeAPI
 from betterstack.uptime.objects import Monitor
@@ -51,6 +65,81 @@ monitors = Monitor.get_all_instances(api=api)
 
 for monitor in monitors:
     print(monitor.url)
+```
+
+#### Working with Status Pages
+
+```python
+from betterstack.uptime import UptimeAPI
+from betterstack.uptime.objects import StatusPage
+
+api = UptimeAPI("yourtokenhere")
+
+# Get all status pages
+for status_page in StatusPage.get_all_instances(api):
+    print(f"{status_page.company_name}: {status_page.aggregate_state}")
+    
+    # Lazy-loaded sections and resources
+    for section in status_page.sections:
+        print(f"  Section: {section.name}")
+    
+    for resource in status_page.resources:
+        print(f"  Resource: {resource.public_name} - {resource.status}")
+```
+
+#### Working with On-Call Calendars
+
+```python
+from betterstack.uptime import UptimeAPI
+from betterstack.uptime.objects import OnCallCalendar
+
+api = UptimeAPI("yourtokenhere")
+
+# Get all on-call calendars
+for calendar in OnCallCalendar.get_all_instances(api):
+    print(f"{calendar.team_name}: {calendar.name}")
+    
+    # Get current on-call users
+    for user in calendar.on_call_users:
+        print(f"  On-call: {user.get('meta', {}).get('email')}")
+    
+    # Create a rotation
+    calendar.create_rotation(
+        users=["alice@example.com", "bob@example.com"],
+        rotation_length=1,
+        rotation_period="week",
+        start_rotations_at="2025-01-01T00:00:00Z",
+        end_rotations_at="2025-12-31T23:59:59Z",
+    )
+```
+
+#### Working with Escalation Policies
+
+```python
+from betterstack.uptime import UptimeAPI
+from betterstack.uptime.objects import EscalationPolicy, PolicyStep
+
+api = UptimeAPI("yourtokenhere")
+
+# Get all escalation policies (uses v3 API)
+for policy in EscalationPolicy.get_all_instances(api):
+    print(f"{policy.name}: {len(policy.steps)} steps")
+
+# Create a new policy with helper class
+steps = [
+    PolicyStep(
+        step_type="escalation",
+        wait_before=0,
+        urgency_id=123456,
+        step_members=[{"type": "current_on_call"}],
+    ).to_dict(),
+    PolicyStep(
+        step_type="escalation",
+        wait_before=600,  # 10 minutes
+        urgency_id=123456,
+        step_members=[{"type": "entire_team"}],
+    ).to_dict(),
+]
 ```
 
 ## Documentation
@@ -63,11 +152,11 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](#).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/iwink/python-betterstack-uptime/tags).
 
 ## Authors
 
-* **Wouter Mellema** - *Initial work* - [wmellema](https://github.com/wmellema)
+- **Wouter Mellema** - *Initial work* - [wmellema](https://github.com/wmellema)
 
 See also the list of [contributors](https://github.com/iwink/python-betterstack-uptime/contributors) who participated in this project.
 

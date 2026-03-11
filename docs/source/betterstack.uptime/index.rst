@@ -1,44 +1,66 @@
 Module betterstack.uptime
-==========================
+=========================
 
-This module will handle all low-level API calls, using a semi-modular approach. Whilst the API should always return its' objects
-with the format below, the module does not care about what data is assigned to every object. This is generated at runtime, thus 
-guaranteeing compliance with the API. This does mean that the interface to the user could change, so beware!
+The ``betterstack.uptime`` module provides a Python interface to the BetterStack Uptime API.
+It converts API endpoints into Python objects with automatic attribute mapping, change tracking,
+and full CRUD support.
 
-Standard data format
-^^^^^^^^^^^^^^^^^^^^
-
-.. highlight:: json
-.. code-block:: json
-
-   {
-      "data": {
-         "id": 1234,
-         "attributes": {
-            "somekey": "somevalue",
-         }
-      }
-   }
-
-
-
-
-Submodules
+Quick Start
 -----------
 
+.. code-block:: python
+
+    from betterstack.uptime import UptimeAPI
+    from betterstack.uptime.objects import Monitor, Incident
+
+    # Initialize the API client
+    api = UptimeAPI("your-bearer-token")
+
+    # Get all monitors
+    for monitor in Monitor.get_all_instances(api):
+        print(f"{monitor.url}: {monitor.status}")
+
+    # Get incidents for a specific monitor
+    for incident in Incident.filter(api, monitor_id=12345):
+        print(f"{incident.started_at}: {incident.cause}")
+
+API Response Format
+-------------------
+
+The BetterStack API returns data in the following format, which is automatically
+parsed and mapped to object attributes:
+
+.. code-block:: json
+
+    {
+        "data": {
+            "id": "12345",
+            "type": "monitor",
+            "attributes": {
+                "url": "https://example.com",
+                "status": "up",
+                "check_frequency": 30
+            }
+        }
+    }
+
+Submodules
+----------
+
 .. toctree::
-    :maxdepth: 3
-    :glob:
-    :titlesonly:
+    :maxdepth: 2
 
-    ./*
+    api
+    base
+    objects
+    exceptions
+    auth
+    helpers
 
-Module contents
+Module Contents
 ---------------
 
 .. automodule:: betterstack.uptime
    :members:
    :undoc-members:
    :show-inheritance:
-
-

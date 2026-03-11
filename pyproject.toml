@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "betterstack-uptime"
-version = "2.0.0"
+version = "2.0.1"
 description = "Library for communicating with the BetterStack Uptime API"
 readme = "README.md"
 license = "MIT"

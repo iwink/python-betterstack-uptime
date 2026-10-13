@@ -11,4 +11,4 @@ Example:
     >>> monitors = list(Monitor.get_all_instances(api))
 """
 
-__version__ = "2.0.0"
+__version__ = "2.0.2"

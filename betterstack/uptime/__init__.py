@@ -74,4 +74,4 @@ __all__ = [
     "filter_on_attribute",
 ]
 
-__version__ = "2.0.0"
+__version__ = "2.0.2"

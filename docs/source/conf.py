@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 project = "Python-Betterstack-Uptime"
 copyright = "2023, iWink"
 author = "iWink"
-release = "2.0.0"
+release = "2.0.2"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

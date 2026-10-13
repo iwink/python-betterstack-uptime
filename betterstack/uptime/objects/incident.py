@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from ..base import BaseAPIObject
+
+if TYPE_CHECKING:
+    from ..api import PaginatedAPI
 
 
 @dataclass
@@ -48,8 +51,8 @@ class Incident(BaseAPIObject):
         push: Whether push notifications were sent for this incident.
         critical_alert: Whether critical/high-urgency alerts were sent.
         metadata: Custom metadata dictionary attached to this incident.
-        monitor_id: ID of the monitor that triggered this incident.
-        heartbeat_id: ID of the heartbeat that triggered this incident.
+        monitor_id: ID of the monitor that triggered this incident (from the ``monitor`` relationship).
+        heartbeat_id: ID of the heartbeat that triggered this incident (from the ``heartbeat`` relationship).
     """
 
     type: ClassVar[str] = "incident"
@@ -96,6 +99,36 @@ class Incident(BaseAPIObject):
     metadata: dict[str, Any] | None = None
     monitor_id: int | None = None
     heartbeat_id: int | None = None
+
+    @classmethod
+    def _from_api_response(
+        cls,
+        api: PaginatedAPI,
+        data: dict[str, Any],
+    ) -> Incident:
+        """Create an Incident from API response data.
+
+        This override fills monitor_id and heartbeat_id from the
+        ``monitor`` and ``heartbeat`` relationships.
+
+        Args:
+            api: API instance for further requests.
+            data: Raw API response data.
+
+        Returns:
+            Incident instance.
+        """
+        instance = super()._from_api_response(api, data)
+
+        relationships = data.get("relationships") or {}
+        for relation, field_name in (("monitor", "monitor_id"), ("heartbeat", "heartbeat_id")):
+            related = (relationships.get(relation) or {}).get("data")
+            if isinstance(related, dict) and related.get("id") is not None:
+                setattr(instance, field_name, int(related["id"]))
+
+        # Ids taken from relationships are fetched values, not local changes
+        instance.reset_variable_tracking()
+        return instance
 
     @property
     def is_resolved(self) -> bool:

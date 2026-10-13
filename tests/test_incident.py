@@ -41,9 +41,8 @@ INCIDENT_1 = {
             "critical_alert": False,
             "metadata": {"key": "value"},
             "screenshot_url": None,
-            "monitor_id": 123,
-            "heartbeat_id": None,
         },
+        "relationships": {"monitor": {"data": {"id": "123", "type": "monitor"}}},
     }
 }
 
@@ -79,9 +78,8 @@ INCIDENT_ACKNOWLEDGED = {
             "critical_alert": False,
             "metadata": {"key": "value"},
             "screenshot_url": None,
-            "monitor_id": 123,
-            "heartbeat_id": None,
         },
+        "relationships": {"monitor": {"data": {"id": "123", "type": "monitor"}}},
     }
 }
 
@@ -117,9 +115,8 @@ INCIDENT_RESOLVED = {
             "critical_alert": False,
             "metadata": {"key": "value"},
             "screenshot_url": None,
-            "monitor_id": 123,
-            "heartbeat_id": None,
         },
+        "relationships": {"monitor": {"data": {"id": "123", "type": "monitor"}}},
     }
 }
 
@@ -345,3 +342,47 @@ class TestIncident(unittest.TestCase):
             "metadata",
         ]
         self.assertEqual(Incident._allowed_query_parameters, expected_params)
+
+    @responses.activate
+    def test_monitor_id_from_relationships(self):
+        """Test monitor_id is read from relationships, as the v3 API returns it."""
+        responses.add(
+            responses.GET,
+            f"{V3_BASE_URL}incidents",
+            json=make_paginated_response([INCIDENT_1["data"]]),
+            status=200,
+        )
+
+        incident = next(iter(Incident.filter(self.api, resolved=False)))
+
+        self.assertEqual(incident.monitor_id, 123)
+        self.assertIsNone(incident.heartbeat_id)
+        self.assertEqual(incident.get_modified_properties(), [])
+
+    def test_heartbeat_id_from_relationships(self):
+        """Test heartbeat_id is read from relationships."""
+        data = {
+            "id": "3",
+            "type": "incident",
+            "attributes": {"status": "Started"},
+            "relationships": {"heartbeat": {"data": {"id": "42", "type": "heartbeat"}}},
+        }
+
+        incident = Incident._from_api_response(self.api, data)
+
+        self.assertEqual(incident.heartbeat_id, 42)
+        self.assertIsNone(incident.monitor_id)
+
+    def test_no_relationship_leaves_ids_empty(self):
+        """Test incidents without relationships keep monitor_id and heartbeat_id None."""
+        data = {
+            "id": "4",
+            "type": "incident",
+            "attributes": {"status": "Started"},
+            "relationships": {"monitor": {"data": None}},
+        }
+
+        incident = Incident._from_api_response(self.api, data)
+
+        self.assertIsNone(incident.monitor_id)
+        self.assertIsNone(incident.heartbeat_id)
